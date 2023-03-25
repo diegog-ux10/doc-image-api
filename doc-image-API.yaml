@@ -1,0 +1,210 @@
+openapi: 3.0.3
+info:
+  title: API Image Manipulation
+  description: Create and save photo albums, and change their resolution.
+  version: 1.0.0
+servers:
+  - url: https://github.com/diegog-ux10/imagen-manipulation-laravel-api
+tags:
+- name: Album
+  description: This endpoint is used to obtain a saved album or upload photos to said album.
+  
+paths:
+  /:
+    post:
+      tags:
+      - Album
+      summary: Create a new album
+      parameters:
+      - $ref: '#/components/parameters/token'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BodyAlbumPost'
+        required: true
+      responses:
+        201:
+          description: (OK) The album has been created successfully
+          content:
+            applitacion/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAlbumPost'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+    get:
+      tags:
+      - Album
+      summary: Get all albums
+      parameters:
+      - $ref: '#/components/parameters/token'
+      responses:
+        200:
+          description: (OK) The request has been answered successfully
+          content:
+            applitacion/json:
+              schema:
+                $ref: '#/components/schemas/SuccessGetAlbums'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+          
+  /{album_id}:
+    get:
+      tags:
+      - Album
+      summary: Get an album by its id
+      parameters:
+      - $ref: '#/components/parameters/token'
+      - name: album_id
+        in: path
+        description: album id
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: (OK) The request has been answered
+          content:
+            applitacion/json:
+              schema:
+                $ref: '#/components/schemas/SuccessGetAlbumById'
+        404:
+          $ref: '#/components/responses/NotFound'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        500:
+          $ref: '#/components/responses/ServerError'
+      
+    put:
+      tags:
+      - Album
+      summary: Modify an album by its id
+      parameters:
+      - $ref: '#/components/parameters/token'
+      - name: album_id
+        in: path
+        description: id of the album that will be modified
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: (OK) The album has been successfully updated
+          content:
+            applitacion/json:
+              schema:
+                $ref: '#/components/schemas/SuccessGetAlbumById'
+        404:
+          $ref: '#/components/responses/NotFound'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        500:
+          $ref: '#/components/responses/ServerError'
+          
+    delete:
+      tags:
+      - Album
+      summary: Delete an album by its id
+      parameters:
+      - $ref: '#/components/parameters/token'
+      - name: album_id
+        in: path
+        description: id of the album that will be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        204:
+          description: (OK) The album has been deleted
+        404:
+          $ref: '#/components/responses/NotFound'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        500:
+          $ref: '#/components/responses/ServerError'
+      
+    
+
+components:
+  responses:
+    Unauthorized:
+      description: (Unauthorized) the client is not authorized to make the request
+    NotFound:
+      description: (Not Found) The route could not be found
+    BadRequest:
+      description: (Bad Request) The data sent is incorrect
+    ServerError:
+      description: Server Error
+  parameters:
+    token:
+      name: token
+      in: header
+      description: Authentication Token
+      required: true
+      schema:
+        type: string
+  schemas:
+    BodyAlbumPost:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Album's Name
+    
+    SuccessAlbumPost:
+      type: object
+      properties:
+        idAlbum:
+          type: integer
+          enum: [1]
+          description: id assigned to the new album
+        name:
+          type: string
+        create at:
+          type: string
+        updated_at:
+          type: string
+    SuccessGetAlbumById:
+      type: object
+      properties:
+        idAlbum:
+          type: integer
+          enum: [1]
+          description: id assigned to the new album
+        name:
+          type: string
+        create at:
+          type: string
+        updated_at:
+          type: string
+    SuccessGetAlbums:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                enum: [1]
+              name:
+                type: string
+                enum: [album name]
+              create at:
+                type: string
+              updated_at:
+                type: string
+          
